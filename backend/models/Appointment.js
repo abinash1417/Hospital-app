@@ -21,7 +21,8 @@ const appointmentSchema = new mongoose.Schema({
   problem: { type: String, default: '' },
   bookingNumber: { type: String, default: '' },
   otp: { type: String, default: '' },
-  otpExpiresAt: { type: Date }
+  otpExpiresAt: { type: Date },
+  reminderSent: { type: Boolean, default: false }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Appointment', appointmentSchema);
