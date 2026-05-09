@@ -36,8 +36,7 @@ const emailTemplate = (title, content) => `
   <div class="container">
     <div class="header">
       <h1>🏥 MediCare Hospital</h1>
-      <p>No. 45, Galle Road, Colombo 03, Sri Lanka | +94 11 234 5678</p>
-    </div>
+      <p>No. 45, Palaali Road, Jaffna, Sri Lanka | +94 11 234 5678</p>    </div>
     <div class="body">
       <h2 style="color:#1e293b">${title}</h2>
       ${content}
