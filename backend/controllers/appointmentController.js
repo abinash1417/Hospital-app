@@ -19,12 +19,69 @@ const bookAppointment = async (req, res) => {
     if (doctor.isApproved !== 'approved')
       return res.status(400).json({ message: 'Doctor not approved yet' });
 
+    const selectedDate = new Date(date);
+    const dayName = selectedDate.toLocaleDateString('en-US', {
+      weekday: 'long'
+    });
+
+    const availableDays = doctor.availableSlots.map(slot => slot.day);
+    if (!availableDays.includes(dayName)) {
+      return res.status(400).json({
+        message: `Dr. ${doctor.userId.name} is not available on ${dayName}. Available days: ${availableDays.join(', ')}`
+      });
+    }
+
+    const daySlot = doctor.availableSlots.find(slot => slot.day === dayName);
+    if (daySlot) {
+      const [selHour, selMin] = time.split(':').map(Number);
+      const [startHour, startMin] = daySlot.startTime.split(':').map(Number);
+      const [endHour, endMin] = daySlot.endTime.split(':').map(Number);
+
+      const selectedMinutes = selHour * 60 + selMin;
+      const startMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
+
+      if (selectedMinutes < startMinutes || selectedMinutes >= endMinutes) {
+        return res.status(400).json({
+          message: `Please select a time between ${daySlot.startTime} and ${daySlot.endTime} for ${dayName}`
+        });
+      }
+    }
+
+    const existingAppointment = await Appointment.findOne({
+      doctorId,
+      date,
+      time,
+      status: { $in: ['pending', 'confirmed'] }
+    });
+
+    if (existingAppointment) {
+      return res.status(400).json({
+        message: `This time slot is already booked. Please choose a different time.`
+      });
+    }
+
+    const samePatientAppointment = await Appointment.findOne({
+      doctorId,
+      date,
+      patientId: req.user._id,
+      status: { $in: ['pending', 'confirmed'] }
+    });
+
+    if (samePatientAppointment) {
+      return res.status(400).json({
+        message: 'You already have an appointment with this doctor on this date.'
+      });
+    }
+
     let otp = generateOTP();
     let bookingNumber = generateBookingNumber();
 
     // OTP expires 2 hours after appointment time
     const appointmentDateTime = new Date(`${date}T${time}`);
-    const otpExpiresAt = new Date(appointmentDateTime.getTime() + 2 * 60 * 60 * 1000);
+    const otpExpiresAt = new Date(
+      appointmentDateTime.getTime() + 2 * 60 * 60 * 1000
+    );
 
     try {
       const result = await sendAppointmentEmail(
