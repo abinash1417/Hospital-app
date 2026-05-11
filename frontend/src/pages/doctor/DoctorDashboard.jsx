@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import API from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import Spinner from '../../components/Spinner';
+import PhotoUpload from '../../components/PhotoUpload';
 import toast from 'react-hot-toast';
-import { FaCalendarAlt, FaComments, FaCheck, FaTimes, FaUserMd } from 'react-icons/fa';
+import {
+  FaCalendarAlt, FaComments, FaCheck,
+  FaTimes, FaUserMd, FaFileMedical
+} from 'react-icons/fa';
 
 const statusColors = {
   pending: 'bg-amber-100 text-amber-700',
@@ -55,38 +59,49 @@ const DoctorDashboard = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            Dr. {user?.name} 👨‍⚕️
-          </h1>
-          <p className="text-gray-500 mt-1">
-            {profile ? profile.specialization : 'Complete your profile'}
-          </p>
-        </div>
-        <div className="flex gap-3">
-  <button
-    onClick={() => navigate('/doctor/edit-profile')}
-    className="border border-primary-600 text-primary-600 px-4 py-2.5 rounded-xl font-medium hover:bg-primary-50 transition text-sm">
-    ✏️ Edit Profile
-  </button>
-</div>
-{!profile && (
-  <button
-    onClick={() => navigate('/doctor/complete-profile')}
-    className="bg-amber-500 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-amber-600 transition">
-    ⚠️ Complete Your Profile
-  </button>
-)}
-        {profile?.isApproved === 'pending' && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-2 rounded-xl text-sm">
-            ⏳ Waiting for admin approval
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div className="flex items-center gap-6">
+          <PhotoUpload
+            currentPhoto={user?.photo}
+            name={user?.name}
+          />
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-800">
+              Dr. {user?.name}
+            </h1>
+            <p className="text-gray-500 mt-1">{user?.email}</p>
+            {profile && (
+              <p className="text-primary-600 font-medium mt-1">
+                {profile.specialization}
+              </p>
+            )}
           </div>
-        )}
+          <div className="flex gap-3 flex-wrap">
+            {!profile && (
+              <button
+                onClick={() => navigate('/doctor/complete-profile')}
+                className="bg-amber-500 text-white px-5 py-2.5 rounded-xl font-medium hover:bg-amber-600 transition">
+                Complete Your Profile
+              </button>
+            )}
+            {profile && (
+              <button
+                onClick={() => navigate('/doctor/edit-profile')}
+                className="border border-primary-600 text-primary-600 px-4 py-2.5 rounded-xl font-medium hover:bg-primary-50 transition text-sm">
+                Edit Profile
+              </button>
+            )}
+            {profile?.isApproved === 'pending' && (
+              <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-2 rounded-xl text-sm">
+                Waiting for admin approval
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Total', count: appointments.length, color: 'bg-blue-50 text-blue-700' },
@@ -101,7 +116,6 @@ const DoctorDashboard = () => {
         ))}
       </div>
 
-      {/* Appointments */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
         <div className="p-6 border-b border-gray-100">
           <h2 className="font-bold text-gray-800 flex items-center gap-2">
@@ -118,7 +132,8 @@ const DoctorDashboard = () => {
         ) : (
           <div className="divide-y divide-gray-50">
             {appointments.map(apt => (
-              <div key={apt._id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div key={apt._id}
+                className="p-6 flex flex-col sm:flex-row sm:items-center gap-4">
                 <img
                   src={apt.patientId?.photo || `https://ui-avatars.com/api/?name=${apt.patientId?.name}&background=6366f1&color=fff`}
                   alt={apt.patientId?.name}
@@ -137,6 +152,11 @@ const DoctorDashboard = () => {
                   {apt.problem && (
                     <p className="text-sm text-gray-400 mt-1">
                       💬 {apt.problem}
+                    </p>
+                  )}
+                  {apt.bookingNumber && (
+                    <p className="text-xs text-green-600 mt-1 font-medium">
+                      📋 Ref: {apt.bookingNumber}
                     </p>
                   )}
                 </div>
@@ -160,19 +180,24 @@ const DoctorDashboard = () => {
                       </>
                     )}
                     {apt.status === 'confirmed' && (
-                      <>
-                        <button
-                          onClick={() => navigate(`/chat/${apt.patientId?._id}`)}
-                          className="flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
-                          <FaComments size={11} /> Chat
-                        </button>
-                        <button
-                          onClick={() => handleStatus(apt._id, 'completed')}
-                          className="flex items-center gap-1 bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-purple-100 transition">
-                          <FaCheck size={11} /> Done
-                        </button>
-                      </>
-                    )}
+  <>
+    <button
+      onClick={() => navigate(`/doctor/prescription/${apt._id}`)}
+      className="flex items-center gap-1 bg-green-50 text-green-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-green-100 transition">
+      <FaFileMedical size={11} /> Prescribe
+    </button>
+    <button
+      onClick={() => navigate(`/chat/${apt.patientId?._id}`)}
+      className="flex items-center gap-1 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-blue-100 transition">
+      <FaComments size={11} /> Chat
+    </button>
+    <button
+      onClick={() => handleStatus(apt._id, 'completed')}
+      className="flex items-center gap-1 bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-purple-100 transition">
+      <FaCheck size={11} /> Done
+    </button>
+  </>
+)}
                   </div>
                 </div>
               </div>
