@@ -26,7 +26,6 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             <Link to="/doctors"
               className="text-gray-600 hover:text-primary-600 font-medium transition">
@@ -84,7 +83,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button
             className="md:hidden text-gray-600"
             onClick={() => setMenuOpen(!menuOpen)}>
@@ -92,7 +90,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden py-4 border-t border-gray-100 flex flex-col gap-3">
             <Link to="/doctors" className="text-gray-600 font-medium py-2"
