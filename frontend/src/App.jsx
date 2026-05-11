@@ -14,7 +14,11 @@ import CompleteProfile from './pages/doctor/CompleteProfile';
 import EditProfile from './pages/doctor/EditProfile';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-
+import WritePrescription from './pages/doctor/WritePrescription';
+import MyPrescriptions from './pages/patient/MyPrescriptions';
+import MedicalHistory from './pages/patient/MedicalHistory';
+import SymptomChecker from './pages/patient/SymptomChecker';
+import Chatbot from './components/Chatbot';
 
 // Protected Route
 const ProtectedRoute = ({ children, roles }) => {
@@ -77,7 +81,28 @@ function App() {
     <EditProfile />
   </ProtectedRoute>
 } />
+<Route path="/doctor/prescription/:appointmentId" element={
+  <ProtectedRoute roles={['doctor']}>
+    <WritePrescription />
+  </ProtectedRoute>
+} />
+<Route path="/patient/prescriptions" element={
+  <ProtectedRoute roles={['patient']}>
+    <MyPrescriptions />
+  </ProtectedRoute>
+} />
+<Route path="/patient/medical-history" element={
+  <ProtectedRoute roles={['patient']}>
+    <MedicalHistory />
+  </ProtectedRoute>
+} />
+<Route path="/patient/symptom-checker" element={
+  <ProtectedRoute roles={['patient']}>
+    <SymptomChecker />
+  </ProtectedRoute>
+} />
       </Routes>
+      <Chatbot />
     </BrowserRouter>
   );
 }
