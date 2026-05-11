@@ -91,7 +91,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-2 mb-8 border-b border-gray-200 overflow-x-auto">
         {tabs.map(t => (
           <button
@@ -113,7 +112,6 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Overview Tab */}
       {tab === 'overview' && stats && (
         <div className="space-y-6">
           {/* Stats Grid */}
@@ -163,7 +161,6 @@ const AdminDashboard = () => {
             ))}
           </div>
 
-          {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button
               onClick={() => setTab('doctors')}
@@ -194,7 +191,6 @@ const AdminDashboard = () => {
             </button>
           </div>
 
-          {/* Pending doctor approvals alert */}
           {stats.pendingDoctors > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -218,7 +214,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Doctors Tab */}
       {tab === 'doctors' && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -317,7 +312,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Patients Tab */}
       {tab === 'patients' && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 border-b border-gray-100">
