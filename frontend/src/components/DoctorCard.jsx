@@ -39,7 +39,6 @@ const DoctorCard = ({ doctor }) => {
           </div>
         </div>
 
-        {/* Availability */}
         {isAvailableToday ? (
           <div className="flex items-center gap-2 mb-4">
             <div className="w-2 h-2 rounded-full bg-green-400"></div>
