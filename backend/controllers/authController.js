@@ -18,11 +18,19 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role, phone } = req.body;
 
+    // Block admin registration through API
+    if (role === 'admin') {
+      return res.status(403).json({
+        message: 'Admin registration is not allowed through this form'
+      });
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists)
       return res.status(400).json({ message: 'Email already exists' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       name, email,
       password: hashedPassword,
@@ -44,6 +52,7 @@ const register = async (req, res) => {
       photo: user.photo,
       token: generateToken(user._id)
     });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -76,12 +85,13 @@ const login = async (req, res) => {
       photo: user.photo,
       token: generateToken(user._id)
     });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Get me
+// Get current user
 const getMe = async (req, res) => {
   res.json(req.user);
 };
@@ -130,14 +140,14 @@ const forgotPassword = async (req, res) => {
       <div style="background:#fff7ed;border:1px solid #fed7aa;
         border-radius:8px;padding:12px;font-size:13px;
         color:#9a3412;margin-top:15px">
-        ⚠️ If you did not request this, please ignore this email.
+        If you did not request this, please ignore this email.
         Your password will not change.
       </div>
     `;
 
     await sendEmail(
       email,
-      '🔐 Reset Your MediCare Password',
+      'Reset Your MediCare Password',
       emailTemplate('Password Reset Request', content)
     );
 
