@@ -197,8 +197,6 @@ cd Hospital-app
 ```bash
 cd backend
 npm install
-cp .env.example .env
-# Fill in your .env values
 npm run seed
 npm run dev
 ```
@@ -219,18 +217,6 @@ docker run -p 5000:5000 --env-file .env medicare-backend
 
 ---
 
-## 🏗️ System Architecture
-User Browser
-↓
-React.js Frontend (Vite)
-↓
-Node.js + Express.js Backend
-↓
-MongoDB Atlas (Database)
-↓
-Cloudinary (Images) + Groq API (AI)
-
----
 
 ## 🔒 Security Features
 - 🔐 JWT token authentication (30 day expiry)
@@ -255,5 +241,3 @@ Cloudinary (Images) + Groq API (AI)
 
 ---
 
-## 📄 License
-MIT License
