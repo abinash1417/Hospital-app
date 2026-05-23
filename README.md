@@ -151,31 +151,6 @@ The MediCare Hospital Management System is a full-stack platform that connects:
 
 ---
 
-## 🗂️ Project Structure
-
-hospital-app/
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── socket/
-│   ├── utils/
-│   ├── Dockerfile
-│   └── server.js
-└── frontend/
-└── src/
-├── components/
-├── context/
-├── pages/
-│   ├── patient/
-│   ├── doctor/
-│   └── admin/
-└── utils/
-
----
-
 ## ⚙️ Prerequisites
 - 💻 Node.js (v18+)
 - 🐳 Docker Desktop
