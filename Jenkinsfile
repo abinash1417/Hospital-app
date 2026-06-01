@@ -71,6 +71,7 @@ pipeline {
 
         stage('Deploy Frontend to S3') {
             steps {
+                bat 'cd frontend && npm install && npm run build'
                 bat '"C:\\Program Files\\Amazon\\AWSCLIV2\\aws.exe" s3 sync frontend\\dist\\ s3://%S3_BUCKET% --region %AWS_REGION% --delete'
             }
         }
