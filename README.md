@@ -5,6 +5,39 @@
 
 ---
 
+## 🌐 Live Deployment
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | http://hospital-app-frontend-159372.s3-website.eu-north-1.amazonaws.com |
+| **Backend API** | http://hospital-alb-1694713240.eu-north-1.elb.amazonaws.com |
+
+---
+
+## ☁️ AWS Infrastructure
+
+| Service | Purpose |
+|---------|---------|
+| **EC2 (t3.micro)** | Backend Node.js server |
+| **S3** | Frontend static website hosting |
+| **ECR** | Docker image registry |
+| **ALB** | Application Load Balancer |
+| **Auto Scaling Group** | Scale EC2 instances (1-3) based on CPU |
+| **IAM** | Roles and permissions |
+| **SSM** | Remote deployment without SSH |
+| **CloudFormation** | Infrastructure as Code |
+
+## 🔄 CI/CD Pipeline
+
+GitHub Push → Jenkins
+├── Build Backend Docker Image
+├── Build Frontend Docker Image
+├── Push both images to AWS ECR
+├── Deploy Backend to EC2 via AWS SSM
+└── Build & Deploy Frontend to S3
+
+---
+
 ## 🌟 System Overview
 
 ### 🔍 Overview
@@ -17,7 +50,7 @@ The MediCare Hospital Management System is a full-stack platform that connects:
 - **Frontend:** React.js ⚛️
 - **Backend:** Node.js + Express.js 🟢
 - **AI:** Groq API (LLaMA 3.3 70B) 🤖
-- **DevOps:** Docker 🐳
+- **DevOps:** Docker 🐳 + AWS ☁️ + Jenkins 🔧
 
 | Component | Technology Stack | Key Features |
 |-----------|-----------------|--------------|
@@ -25,7 +58,7 @@ The MediCare Hospital Management System is a full-stack platform that connects:
 | Backend | Node.js, Express.js, MongoDB | 🔌 REST API, 🔒 JWT Auth |
 | Real-time | Socket.io | 💬 Live Chat, 🔔 Notifications |
 | AI | Groq API | 🤖 Symptom Checker, 🗣️ Chatbot |
-| DevOps | Docker | 🐳 Containerization |
+| DevOps | Docker, AWS, Jenkins | 🐳 Containerization, ☁️ Cloud, 🔄 CI/CD |
 
 ---
 
@@ -185,13 +218,10 @@ npm run dev
 
 **Docker:**
 ```bash
-cd backend
-docker build -t medicare-backend .
-docker run -p 5000:5000 --env-file .env medicare-backend
+docker-compose up --build
 ```
 
 ---
-
 
 ## 🔒 Security Features
 - 🔐 JWT token authentication (30 day expiry)
@@ -206,7 +236,6 @@ docker run -p 5000:5000 --env-file .env medicare-backend
 ---
 
 ## 🚀 Future Enhancements
-- ☁️ AWS cloud deployment (EC2, S3, CloudFront)
 - 📲 Push notifications
 - 📈 Advanced analytics for admin
 - 💳 Online payment integration (PayHere Sri Lanka)
@@ -215,4 +244,3 @@ docker run -p 5000:5000 --env-file .env medicare-backend
 - ⭐ Doctor rating and review system
 
 ---
-
