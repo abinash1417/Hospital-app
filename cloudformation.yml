@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Hospital App Infrastructure
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: hospital-app
+
+Resources:
+
+  # ECR Repository - Backend
+  BackendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: hospital-backend-cf
+      ImageTagMutability: MUTABLE
+
+  # ECR Repository - Frontend
+  FrontendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: hospital-frontend-cf
+      ImageTagMutability: MUTABLE
+
+  # S3 Bucket - Frontend Hosting
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${ProjectName}-frontend-cf-159372'
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  # S3 Bucket Policy - Public Read
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${ProjectName}-frontend-cf-159372/*'
+
+  # Security Group
+  HospitalSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: hospital-sg-cf
+      GroupDescription: Security group for Hospital App
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  FrontendURL:
+    Description: Frontend S3 Website URL
+    Value: !GetAtt FrontendBucket.WebsiteURL
+
+  BackendECR:
+    Description: Backend ECR Repository URI
+    Value: !GetAtt BackendRepository.RepositoryUri
+
+  FrontendECR:
+    Description: Frontend ECR Repository URI
+    Value: !GetAtt FrontendRepository.RepositoryUri
+
+  SecurityGroupId:
+    Description: Security Group ID
+    Value: !GetAtt HospitalSecurityGroup.GroupId
