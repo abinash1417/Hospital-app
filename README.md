@@ -5,12 +5,11 @@
 
 ---
 
-## 🌐 Live Deployment
+## 🎥 Demo
 
-| Service | URL |
-|---------|-----|
-| **Frontend** | http://hospital-app-frontend-159372.s3-website.eu-north-1.amazonaws.com |
-| **Backend API** | http://hospital-alb-1694713240.eu-north-1.elb.amazonaws.com |
+**Feature Walkthrough Video:** [Watch on YouTube](https://youtu.be/oN8VSXBk8ek)
+
+> The live AWS deployment below was fully built and tested during development, but is currently offline due to AWS free-tier limits being reached. The video above walks through the app's features and UI. The AWS infrastructure and Jenkins CI/CD pipeline are documented below.
 
 ---
 
@@ -29,12 +28,30 @@
 
 ## 🔄 CI/CD Pipeline
 
-GitHub Push → Jenkins
-├── Build Backend Docker Image
-├── Build Frontend Docker Image
-├── Push both images to AWS ECR
-├── Deploy Backend to EC2 via AWS SSM
-└── Build & Deploy Frontend to S3
+Fully automated, zero-downtime deployment pipeline triggered on every push to `main`:
+
+```mermaid
+flowchart LR
+    A[👨‍💻 Git Push] --> B[🔧 Jenkins Triggered]
+    B --> C[🐳 Build Backend Image]
+    B --> D[🐳 Build Frontend Image]
+    C --> E[📦 Push to AWS ECR]
+    D --> E
+    E --> F[🚀 Deploy Backend to EC2 via SSM]
+    E --> G[🌐 Build & Deploy Frontend to S3]
+    F --> H[⚖️ Auto Scaling + Load Balancer]
+```
+
+| Stage | Action | Tooling |
+|:---:|---|---|
+| 1️⃣ | Push triggers Jenkins job automatically | GitHub Webhook → Jenkins |
+| 2️⃣ | Parallel Docker builds for backend & frontend | Docker |
+| 3️⃣ | Versioned images pushed to a private registry | AWS ECR |
+| 4️⃣ | Backend redeployed to EC2 with no SSH access needed | AWS SSM |
+| 5️⃣ | Frontend built and synced to static hosting | AWS S3 |
+| 6️⃣ | Traffic auto-balanced across healthy instances | ALB + Auto Scaling Group |
+
+**Result:** every merge to `main` ships to production automatically, with the Load Balancer and Auto Scaling Group keeping the app online during deploys — no manual steps, no downtime.
 
 ---
 
